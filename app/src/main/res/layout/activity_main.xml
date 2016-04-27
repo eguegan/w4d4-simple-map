@@ -34,6 +34,17 @@
             android:onClick="changeTerrain"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Locate me"
+            android:onClick="startLocation"/>
+    </LinearLayout>
+
     <fragment
         android:id="@+id/a_main_maps"
         android:name="com.google.android.gms.maps.SupportMapFragment"
