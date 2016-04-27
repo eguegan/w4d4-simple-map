@@ -2,6 +2,8 @@ package com.example.simplemap;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,12 +24,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MainActivityTAG_";
     private GoogleMap mMap;
     private Location location;
+    private EditText mSearch;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -37,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mGoogleApiClient = buildGoogleApiClient();
         mGoogleApiClient.connect();
+
+        mSearch = (EditText) findViewById(R.id.search_bar);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.a_main_maps);
         mapFragment.getMapAsync(this);
@@ -103,5 +113,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void startLocation(View view) {
         LatLng lng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lng, 20));
+    }
+
+    public void searchLoc(View view) {
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocationName(mSearch.getText().toString(), 3);
+
+            Address location=addresses.get(0);
+            LatLng lng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lng, 15));
+            for (Address address : addresses) {
+                Log.d(TAG, "onCreate: " + address);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
